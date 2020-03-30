@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Async
@@ -31,14 +31,14 @@ public class SystemInfoScheduled {
         Map<Object, Object> diskUseMap = redisCacheServiceImpl.getMapCache("diskUse");
         Map<Object, Object> memUseMap = redisCacheServiceImpl.getMapCache("memUse");
         SystemInfo systeminfo = SystemInfoUtils.getSystemUseInfo();
-        if (cpuUseMap == null){
-            cpuUseMap = new HashMap<Object, Object>();
+        if (cpuUseMap == null || cpuUseMap.size() == 0){
+            cpuUseMap = initSystemInfo();
         }
-        if (diskUseMap == null){
-            diskUseMap = new HashMap<Object, Object>();
+        if (diskUseMap == null || diskUseMap.size() == 0){
+            diskUseMap = initSystemInfo();
         }
-        if (memUseMap == null){
-            memUseMap = new HashMap<Object, Object>();
+        if (memUseMap == null || memUseMap.size() == 0){
+            memUseMap = initSystemInfo();
         }
         cpuUseMap.put(currHour,String.valueOf(systeminfo.getCpuUse()));
         diskUseMap.put(currHour,String.valueOf(systeminfo.getDiskUse()));
@@ -47,5 +47,17 @@ public class SystemInfoScheduled {
         redisCacheServiceImpl.setMapCache("diskUse", diskUseMap);
         redisCacheServiceImpl.setMapCache("memUse", memUseMap);
         logger.info("=====>>>>>获取系统资源使用信息end");
+    }
+    public Map initSystemInfo(){
+        Map<String,String> initSystemInfo = new LinkedHashMap<String,String>();
+        initSystemInfo.put("0","0");
+        initSystemInfo.put("3","0");
+        initSystemInfo.put("6","0");
+        initSystemInfo.put("9","0");
+        initSystemInfo.put("12","0");
+        initSystemInfo.put("15","0");
+        initSystemInfo.put("18","0");
+        initSystemInfo.put("21","0");
+        return initSystemInfo;
     }
 }
